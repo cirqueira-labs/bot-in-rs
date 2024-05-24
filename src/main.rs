@@ -1,6 +1,19 @@
+use clap::{Arg, Command};
+use dotenv::dotenv;
 use std::collections::HashMap;
+use std::env;
 use thirtyfour::prelude::*;
 use tokio::time::{sleep, Duration};
+
+struct Driver {
+    browser_path: String,
+    browser: String,
+}
+
+impl Driver {
+    fn new() {}
+    fn choose_browser() {}
+}
 
 #[tokio::main]
 async fn main() -> WebDriverResult<()> {
@@ -11,10 +24,39 @@ async fn main() -> WebDriverResult<()> {
     let driver = WebDriver::new("http://localhost:9515", caps.clone()).await?;
     let mut urls = HashMap::<String, bool>::new();
 
+    dotenv().ok();
+
+    let matches = Command::new("bot-in-rs")
+        .version("0.0.1")
+        .author("Cirqueira <mail@cirqueira.com>")
+        .about("LinkedIn Bot made with Rust")
+        .arg(
+            Arg::new("login")
+                .long("login")
+                .help("Use .env variables to login when 'true'")
+                .default_value("true")
+                .value_parser(["true", "false"]),
+        )
+        .arg(
+            Arg::new("browser")
+                .long("browser")
+                .help("Choose the browser (brave-browser or chrome)")
+                .default_value("chrome")
+                .value_parser(["chrome", "brave-browser"]),
+        )
+        .get_matches();
+
+    let login = matches.value_source("login").unwrap();
+    let browser = matches.value_source("browser").unwrap();
+
+    dbg!(login);
+    dbg!(browser);
+
     //TODO
     //select browser
     //verify webdriver server execution
     //login
+    //
 
     driver
         .get("https://www.linkedin.com/mynetwork/invitation-manager/sent/?page=4")
@@ -52,3 +94,7 @@ async fn main() -> WebDriverResult<()> {
 
     Ok(())
 }
+
+fn login() {}
+
+fn review_invites() {}
